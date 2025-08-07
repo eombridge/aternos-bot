@@ -35,11 +35,11 @@ function createBot() {
 
   function sendRegister(password) {
     return new Promise((resolve, reject) => {
-      bot.chat(/register ${password} ${password});
-      console.log([Auth] Sent /register command.);
+      bot.chat(`/register ${password} ${password}`);
+      console.log(`[Auth] Sent /register command.`);
 
       bot.once('chat', (username, message) => {
-        console.log([ChatLog] <${username}> ${message});
+        console.log(`[ChatLog] <${username}> ${message}`);
         if (message.includes('successfully registered')) {
           console.log('[INFO] Registration confirmed.');
           resolve();
@@ -47,25 +47,35 @@ function createBot() {
           console.log('[INFO] Bot was already registered.');
           resolve();
         } else {
-          reject(Registration failed: unexpected message "${message}".);
+          reject(`Registration failed: unexpected message "${message}".`);
         }
+
+
+
+
+
       });
     });
   }
 
   function sendLogin(password) {
     return new Promise((resolve, reject) => {
-      bot.chat(/login ${password});
-      console.log([Auth] Sent /login command.);
+      bot.chat(`/login ${password}`);
+      console.log(`[Auth] Sent /login command.`);
 
       bot.once('chat', (username, message) => {
-        console.log([ChatLog] <${username}> ${message});
+        console.log(`[ChatLog] <${username}> ${message}`);
         if (message.includes('successfully logged in')) {
           console.log('[INFO] Login successful.');
           resolve();
         } else {
-          reject(Login failed: unexpected message "${message}".);
+          reject(`Login failed: unexpected message "${message}".`);
         }
+
+
+
+
+
       });
     });
   }
@@ -92,7 +102,7 @@ function createBot() {
         let i = 0;
 
         setInterval(() => {
-          bot.chat(${messages[i]});
+          bot.chat(`${messages[i]}`);
           i = (i + 1) % messages.length;
         }, delay * 1000);
       } else {
@@ -106,7 +116,7 @@ function createBot() {
 
     if (config.position.enabled) {
       console.log(
-        \x1b[32m[Afk Bot] Starting to move to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m
+        `\x1b[32m[Afk Bot] Starting to move to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`
       );
       bot.pathfinder.setMovements(defaultMove);
       bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z));
@@ -115,10 +125,35 @@ function createBot() {
     if (config.utils['anti-afk'].enabled) {
       console.log('[INFO] Started anti-AFK module with random actions');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       const actions = ['jump', 'forward', 'back', 'left', 'right', 'sneak', 'look', 'chat'];
 
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+
+
+
+
       }
 
       function doRandomAction() {
@@ -151,19 +186,41 @@ function createBot() {
         setTimeout(doRandomAction, nextDelay);
       }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       doRandomAction();
     }
   });
 
   bot.on('goal_reached', () => {
     console.log(
-      \x1b[32m[AfkBot] Bot arrived at the target location. ${bot.entity.position}\x1b[0m
+      `\x1b[32m[AfkBot] Bot arrived at the target location. ${bot.entity.position}\x1b[0m`
     );
   });
 
   bot.on('death', () => {
     console.log(
-      \x1b[33m[AfkBot] Bot has died and was respawned at ${bot.entity.position},
+      `\x1b[33m[AfkBot] Bot has died and was respawned at ${bot.entity.position}`,
       '\x1b[0m'
     );
   });
@@ -179,14 +236,14 @@ function createBot() {
   bot.on('kicked', (reason) =>
     console.log(
       '\x1b[33m',
-      [AfkBot] Bot was kicked from the server. Reason: \n${reason},
+      `[AfkBot] Bot was kicked from the server. Reason: \n${reason}`,
       '\x1b[0m'
     )
   );
 
   bot.on('error', (err) =>
-    console.log(\x1b[31m[ERROR] ${err.message}, '\x1b[0m')
+    console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m')
   );
 }
 
-createBot()
+createBot();
