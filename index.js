@@ -69,6 +69,45 @@ function createBot() {
     });
   }
 
+  // 메시지를 좀 더 자연스럽게 변형하는 함수
+  function humanizeMessage(msg) {
+    // 20% 확률로 이모지 추가
+    if (Math.random() < 0.2) {
+      const emojis = ['😊', '😄', '👍', '😉', '😂', '🙌', '✨'];
+      msg += ' ' + emojis[Math.floor(Math.random() * emojis.length)];
+    }
+    // 10% 확률로 마지막에 느낌표 추가
+    if (Math.random() < 0.1 && !msg.endsWith('!')) {
+      msg += '!';
+    }
+    // 5% 확률로 문장 중간에 ... 넣기
+    if (Math.random() < 0.05) {
+      const pos = Math.floor(msg.length / 2);
+      msg = msg.slice(0, pos) + '...' + msg.slice(pos);
+    }
+    return msg;
+  }
+
+  function sendChatMessagesRandomly(messages) {
+    let i = 0;
+
+    function sendNextMessage() {
+      if (!bot || !bot.chat) return;
+
+      const originalMsg = messages[i];
+      const msg = humanizeMessage(originalMsg);
+      bot.chat(msg);
+
+      i = (i + 1) % messages.length;
+
+      // 3~8초 사이 랜덤 간격 (더 짧게)
+      const delay = 3000 + Math.random() * 5000;
+      setTimeout(sendNextMessage, delay);
+    }
+
+    sendNextMessage();
+  }
+
   bot.once('spawn', () => {
     console.log('\x1b[33m[AfkBot] Bot joined the server', '\x1b[0m');
 
@@ -89,13 +128,8 @@ function createBot() {
       const messages = config.utils['chat-messages']['messages'];
 
       if (config.utils['chat-messages'].repeat) {
-        const delay = config.utils['chat-messages']['repeat-delay'];
-        let i = 0;
-
-        setInterval(() => {
-          bot.chat(`${messages[i]}`);
-          i = (i + 1) % messages.length;
-        }, delay * 1000);
+        // 반복하는 경우엔 새로 만든 자연스러운 랜덤 메시지 함수 사용
+        sendChatMessagesRandomly(messages);
       } else {
         messages.forEach((msg) => {
           bot.chat(msg);
@@ -143,12 +177,14 @@ function createBot() {
             break;
 
           case 'chat':
-            const msg = chatMessages[Math.floor(Math.random() * chatMessages.length)];
+            // 여기서도 메시지를 랜덤하게 바꿔서 좀 더 사람같게
+            let msg = chatMessages[Math.floor(Math.random() * chatMessages.length)];
+            msg = humanizeMessage(msg);
             bot.chat(msg);
             break;
         }
 
-        // 다음 행동까지 랜덤 딜레이
+        // 다음 행동까지 랜덤 딜레이 4~8초 유지
         const nextDelay = getRandomInt(4000, 8000);
         setTimeout(doRandomAction, nextDelay);
       }
