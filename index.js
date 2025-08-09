@@ -49,11 +49,6 @@ function createBot() {
         } else {
           reject(`Registration failed: unexpected message "${message}".`);
         }
-
-
-
-
-
       });
     });
   }
@@ -71,11 +66,6 @@ function createBot() {
         } else {
           reject(`Login failed: unexpected message "${message}".`);
         }
-
-
-
-
-
       });
     });
   }
@@ -125,35 +115,10 @@ function createBot() {
     if (config.utils['anti-afk'].enabled) {
       console.log('[INFO] Started anti-AFK module with random actions');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const actions = ['jump', 'forward', 'back', 'left', 'right', 'sneak', 'look', 'chat'];
 
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-
-
-
-
       }
 
       function doRandomAction() {
@@ -186,30 +151,18 @@ function createBot() {
         setTimeout(doRandomAction, nextDelay);
       }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       doRandomAction();
     }
+        // 5시간(18000초)마다 재접속
+    const reconnectInterval = 5 * 60 * 60 * 1000; // 5시간(ms 단위)
+    setInterval(() => {
+      console.log('[INFO] Scheduled reconnect: disconnecting bot...');
+      bot.quit('Scheduled reconnect');
+      setTimeout(() => {
+        console.log('[INFO] Reconnecting bot...');
+        createBot();
+      }, 5000); // 5초 후 재접속
+    }, reconnectInterval);
   });
 
   bot.on('goal_reached', () => {
